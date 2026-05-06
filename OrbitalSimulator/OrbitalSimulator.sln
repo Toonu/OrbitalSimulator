@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11723.231
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbitalSimulator", "OrbitalSimulator.csproj", "{59E31C35-EBD9-4B04-A589-73C23A77EC31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrbitalSimulator.Tests", "..\OrbitalSimulator.Tests\OrbitalSimulator.Tests.csproj", "{11F9052D-F448-D24D-9FCC-518A4EC2AD55}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		ExportDebug|Any CPU = ExportDebug|Any CPU
+		ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{59E31C35-EBD9-4B04-A589-73C23A77EC31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59E31C35-EBD9-4B04-A589-73C23A77EC31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59E31C35-EBD9-4B04-A589-73C23A77EC31}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{59E31C35-EBD9-4B04-A589-73C23A77EC31}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{59E31C35-EBD9-4B04-A589-73C23A77EC31}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{59E31C35-EBD9-4B04-A589-73C23A77EC31}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{11F9052D-F448-D24D-9FCC-518A4EC2AD55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11F9052D-F448-D24D-9FCC-518A4EC2AD55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11F9052D-F448-D24D-9FCC-518A4EC2AD55}.ExportDebug|Any CPU.ActiveCfg = Release|Any CPU
+		{11F9052D-F448-D24D-9FCC-518A4EC2AD55}.ExportDebug|Any CPU.Build.0 = Release|Any CPU
+		{11F9052D-F448-D24D-9FCC-518A4EC2AD55}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{11F9052D-F448-D24D-9FCC-518A4EC2AD55}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
