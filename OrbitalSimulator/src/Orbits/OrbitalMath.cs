@@ -1,5 +1,5 @@
-using System;
 using Godot;
+using System;
 
 namespace OrbitalSimulator.src.Orbits {
     public static partial class OrbitalMath {
@@ -246,8 +246,7 @@ namespace OrbitalSimulator.src.Orbits {
         public static float CalculateDistanceToSatellite(float e, float p, float v) {
             float denom = 1 + e * MathF.Cos(v);
 
-            if (MathF.Abs(denom) < Program.EPS)
-                throw new ArgumentException("True anomaly near singularity");
+            //if (MathF.Abs(denom) < Program.EPS) throw new ArgumentException("True anomaly near singularity");
 
             return p / denom;
         }

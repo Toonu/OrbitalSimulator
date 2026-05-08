@@ -87,7 +87,7 @@ namespace OrbitalSimulator.src.Orbits {
 
             Periapsis = OrbitalMath.CalculatePeriapsis(Eccentricity, SemiMajorAxis);
             //Hyperbolic orbit does not have Apoapsis, so we set it to NaN in that case. Otherwise, we calculate it normally.
-            Apoapsis = Type == OrbitType.Hyperbolic ? float.NaN : OrbitalMath.CalculateApoapsis(Eccentricity, SemiMajorAxis);
+            Apoapsis = Type != OrbitType.Elliptical ? float.NaN : OrbitalMath.CalculateApoapsis(Eccentricity, SemiMajorAxis);
 
             OrbitalPeriod = Type == OrbitType.Elliptical ? OrbitalMath.CalculateOrbitalPeriod(SemiMajorAxis, mu) : float.NaN;
 

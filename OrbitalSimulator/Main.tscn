@@ -1,6 +1,28 @@
 [gd_scene format=3 uid="uid://cph6xgshdq1yw"]
 
-[ext_resource type="Script" uid="uid://4dbcdodgs84u" path="res://src/orbits/Main.cs" id="1_glv2v"]
+[ext_resource type="Script" uid="uid://4dbcdodgs84u" path="res://src/Orbits/Main.cs" id="1_glv2v"]
+[ext_resource type="Script" uid="uid://cliqx42ynd6kl" path="res://src/Orbits/Orbit.cs" id="2_uu6xs"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_uu6xs"]
 
 [node name="Main" type="Node3D" unique_id=1194720245]
 script = ExtResource("1_glv2v")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1528724016]
+unique_name_in_owner = true
+far = 40000.0
+
+[node name="Centre" type="Node3D" parent="." unique_id=669811520]
+
+[node name="OrbitDrawing" type="MeshInstance3D" parent="Centre" unique_id=116229546 node_paths=PackedStringArray("Focus")]
+script = ExtResource("2_uu6xs")
+Focus = NodePath("..")
+SemiMajorAxis = 20.0
+Eccentricity = 0.2
+Inclination = 0.3
+RightAscensionOfAscendingNode = 0.5
+ArgumentOfPeriapsis = 1.0
+Segments = 200
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=485643286]
+mesh = SubResource("PlaneMesh_uu6xs")
