@@ -115,7 +115,7 @@ namespace OrbitalSimulator.Tests {
         public void GenerateHyperbolicPoints_ShouldProduceValidPoints() {
             OrbitalParameters orbit = new(Vector3.Zero, -8000f, 1.2f, 0f, 0.3f, 0.5f, 0.6f);
 
-            var points = OrbitalPropagator.GenerateHyperbolicPoints(orbit, 2.0f, 100);
+            var points = OrbitalPropagator.GenerateHyperbolicPoints(orbit, 100);
 
             Assert.True(points.Count > 0);
 
@@ -130,7 +130,7 @@ namespace OrbitalSimulator.Tests {
         public void HyperbolicCurve_ShouldNotClose() {
             OrbitalParameters orbit = new(Vector3.Zero, -10000f, 1.5f, 0f, 0.2f, 0.5f, 0.3f);
 
-            var points = OrbitalPropagator.GenerateHyperbolicPoints(orbit, 2.5f, 100);
+            var points = OrbitalPropagator.GenerateHyperbolicPoints(orbit, 100);
 
             Vector3 first = points[0];
             Vector3 last = points[^1];

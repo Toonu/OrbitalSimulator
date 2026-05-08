@@ -127,22 +127,37 @@ namespace OrbitalSimulator.src.Orbits {
         }
 
 
-        public static List<Vector3> GenerateHyperbolicPoints(OrbitalParameters op, float range = 2.5f, int steps = 200) {
+        public static List<Vector3> GenerateHyperbolicPoints(OrbitalParameters op, int steps = 150) {
             var points = new List<Vector3>();
+            float e = op.Eccentricity;
 
-            for (int i = 0; i < steps; i++) {
-                float t = (float)i / (steps - 1);
+            if (e <= 1f)
+                return points; // fallback
 
-                // symmetric around periapsis
-                float nu = (t - 0.5f) * 2f * range;
+            // Calculate the maximum true anomaly (asymptote)
+            float nuMax = MathF.Acos(-1f / e) * 0.95f; // 95% of asymptote to avoid infinity
 
-                var temp = new OrbitalParameters(op.Focus, op.SemiMajorAxis, op.Eccentricity, nu, op.Inclination, op.RightAscensionOfAscendingNode, op.ArgumentOfPeriapsis);
+            for (int i = 0; i <= steps; i++) {
+                float t = (float)i / steps;
+                float nu = Mathf.Lerp(-nuMax, nuMax, t);
+
+                var temp = new OrbitalParameters(
+                    op.Focus,
+                    op.SemiMajorAxis,
+                    e,
+                    nu,
+                    op.Inclination,
+                    op.RightAscensionOfAscendingNode,
+                    op.ArgumentOfPeriapsis
+                );
 
                 try {
                     var (r, _) = OrbitalMath.CalculateOrbitalVectorsFromParameters(temp);
-                    points.Add(r);
+                    if (r.IsFinite()) // safety
+                        points.Add(r);
                 } catch { }
             }
+
             return points;
         }
     }
