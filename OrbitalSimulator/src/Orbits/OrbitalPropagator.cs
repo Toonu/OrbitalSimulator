@@ -68,9 +68,6 @@ namespace OrbitalSimulator.src.Orbits {
                 nu = HyperbolicToTrueAnomaly(e, H);
             }
 
-
-
-
             var updated = new OrbitalParameters(op.Focus, a, e, nu, op.Inclination, op.RightAscensionOfAscendingNode, op.ArgumentOfPeriapsis);
 
             return OrbitalMath.CalculateOrbitalVectorsFromParameters(updated, μ);

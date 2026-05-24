@@ -610,7 +610,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// </summary>
         /// <param name="orbit">Six basic orbital parameters to calculate from</param>
         /// <param name="μ">Gravitational parameter</param>
-        /// <returns>Vectors r and v, which magnitudes gives us orbital heigh and velocity.</returns>
+        /// <returns>Vectors r and v, which magnitudes gives us orbital height and velocity.</returns>
         public static (Vector3 r, Vector3 v) CalculateOrbitalVectorsFromParameters(OrbitalParameters op, float μ = OrbitalParameters.mu) {
             float p = op.SemiParameter;
             float e = op.Eccentricity;

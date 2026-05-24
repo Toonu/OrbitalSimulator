@@ -3,10 +3,11 @@
 [ext_resource type="Script" uid="uid://4dbcdodgs84u" path="res://src/Orbits/Main.cs" id="1_glv2v"]
 [ext_resource type="Texture2D" uid="uid://dfinlx842ywfu" path="res://earth.jpg" id="2_3dxm6"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_03owx"]
-[ext_resource type="Texture2D" uid="uid://mt0rhrgkowtl" path="res://Download-Moon-Texture-Nasa_.webp" id="2_cm0pq"]
+[ext_resource type="Texture2D" uid="uid://mt0rhrgkowtl" path="res://moon.webp" id="2_cm0pq"]
 [ext_resource type="Script" uid="uid://cliqx42ynd6kl" path="res://src/Orbits/Orbit.cs" id="2_uu6xs"]
 [ext_resource type="Texture2D" uid="uid://bwiccncor63iq" path="res://NightSky.exr" id="4_fos0i"]
 [ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="5_3dxm6"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="8_03owx"]
 [ext_resource type="Script" uid="uid://b8hhnqsugykly" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="8_trn2v"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trn2v"]
@@ -20,9 +21,9 @@ transparency = 1
 cull_mode = 2
 shading_mode = 0
 vertex_color_use_as_albedo = true
-albedo_color = Color(0.2, 0.6, 1, 0.15)
+albedo_color = Color(0.2, 0.6, 1, 0.36862746)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_3dxm6"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_03owx"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lgr22"]
 albedo_texture = ExtResource("2_cm0pq")
@@ -40,6 +41,9 @@ sky_material = SubResource("PanoramaSkyMaterial_wkp8b")
 background_mode = 2
 sky = SubResource("Sky_20pc6")
 
+[sub_resource type="Resource" id="Resource_20pc6"]
+script = ExtResource("8_03owx")
+
 [sub_resource type="Resource" id="Resource_wkp8b"]
 script = ExtResource("8_trn2v")
 far = 40000.0
@@ -56,7 +60,7 @@ shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1528724016]
 unique_name_in_owner = true
-transform = Transform3D(0.3269757, 0.08092748, -0.9415613, -2.5443733e-06, 0.9963267, 0.0856337, 0.9450328, -0.027997741, 0.3257748, -12.685312, 2.3447886, 0)
+transform = Transform3D(-0.16732824, 0.21388336, -0.9624215, -0.00018498302, 0.9761777, 0.21697262, 0.9859012, 0.036483698, -0.16330254, -12.685312, 2.3447886, 0)
 top_level = true
 doppler_tracking = 2
 current = true
@@ -75,35 +79,29 @@ mesh = SubResource("SphereMesh_lgr22")
 [node name="OrbitDrawing" type="MeshInstance3D" parent="Earth" unique_id=934598417 node_paths=PackedStringArray("Focus", "Satellite")]
 transform = Transform3D(-1, -8.940697e-08, 2.131745e-15, 8.881778e-16, -4.371138e-08, -1, 8.940697e-08, -1, 4.371138e-08, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_3dxm6")
-mesh = SubResource("ImmediateMesh_3dxm6")
+mesh = SubResource("ImmediateMesh_03owx")
 script = ExtResource("2_uu6xs")
 Focus = NodePath("..")
 Satellite = NodePath("Moon")
 Simulate = true
 SimulationSpeed = 0.11
 SemiMajorAxis = 12.0
-Eccentricity = 0.69
-Inclination = 0.6632251
-RightAscensionOfAscendingNode = 1.4643313
-ArgumentOfPeriapsis = 1.3910275
-TrueAnomaly = 2.1223204
-Segments = 100
-FillColor = Color(0.2, 0.6, 1, 0.36862746)
+Eccentricity = 0.65
 
 [node name="Moon" type="MeshInstance3D" parent="Earth/OrbitDrawing" unique_id=340961077]
-transform = Transform3D(-0.225, -3.3974054e-08, 1.4850531e-15, 0, -9.8350625e-09, -0.225, 3.3974054e-08, -0.225, 9.8350625e-09, 1.8277955, -9.42192, -2.2021766)
+transform = Transform3D(-0.225, -3.3974054e-08, 1.4850531e-15, 0, -9.8350625e-09, -0.225, 3.3974054e-08, -0.225, 9.8350625e-09, 0.37277293, 4.0509534, 1.0444211)
 mesh = SubResource("SphereMesh_03owx")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=681249099]
 environment = SubResource("Environment_5vvyt")
 
-[node name="PhantomCamera3D" type="Node3D" parent="." unique_id=1999484194 node_paths=PackedStringArray("follow_targets", "look_at_targets")]
-transform = Transform3D(0.32697567, 0.08092746, -0.94156116, -2.544373e-06, 0.9963265, 0.085633695, 0.94503266, -0.027997736, 0.32577476, -12.685312, -1.0249396e-07, -2.3447886)
+[node name="PhantomCamera3D" type="Node3D" parent="." unique_id=1999484194 node_paths=PackedStringArray("look_at_targets")]
+transform = Transform3D(-0.16732822, 0.2138833, -0.96242136, -0.000184983, 0.9761774, 0.21697259, 0.9859011, 0.036483686, -0.16330253, -12.685312, -1.0249396e-07, -2.3447886)
 script = ExtResource("5_3dxm6")
 priority = 10
-follow_targets = [NodePath("../Earth"), NodePath("../Earth/OrbitDrawing/Moon")]
 look_at_mode = 3
 look_at_targets = [NodePath("../Earth"), NodePath("../Earth/OrbitDrawing/Moon")]
+tween_resource = SubResource("Resource_20pc6")
 tween_on_load = false
 camera_3d_resource = SubResource("Resource_wkp8b")
 look_at_damping = true

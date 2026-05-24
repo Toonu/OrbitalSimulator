@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mt0rhrgkowtl"
-path.s3tc="res://.godot/imported/Download-Moon-Texture-Nasa_.webp-369bf8cecc3706cf837250877718114d.s3tc.ctex"
+path.s3tc="res://.godot/imported/moon.webp-a2a11c4844840f24cf3a241df589ccf8.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Download-Moon-Texture-Nasa_.webp"
-dest_files=["res://.godot/imported/Download-Moon-Texture-Nasa_.webp-369bf8cecc3706cf837250877718114d.s3tc.ctex"]
+source_file="res://moon.webp"
+dest_files=["res://.godot/imported/moon.webp-a2a11c4844840f24cf3a241df589ccf8.s3tc.ctex"]
 
 [params]
 
