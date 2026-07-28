@@ -10,11 +10,11 @@ namespace OrbitalSimulator.src.Orbits {
         /// </summary>
         /// <param name="args">Arguments string[]</param>
         public static void Start(string[] args) {
-            Console.WriteLine("Hello, World!");
             if (args.Length > 0) {
+                GD.Print(args.Join());
             }
 
-            
+
             float ftTokmConversion = 0.0003048f; // ft → km
 
             Vector3 r = new(4.1852f, 6.2778f, 10.463f);
@@ -28,13 +28,7 @@ namespace OrbitalSimulator.src.Orbits {
             v *= ftTokmConversion;
 
             OrbitalParameters op = OrbitalMath.CalculateOrbitalElementsFromState(Vector3.Zero, r, v);
-            Console.WriteLine(op.ToString());
-            /*
-            while (true) {
-                t += dt;
-                (r, v) = OrbitalPropagator.Propagate(...);
-            }
-            */
+            GD.Print(op.ToString());
         }
     }
 }

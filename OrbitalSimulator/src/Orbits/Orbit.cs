@@ -13,8 +13,7 @@ namespace OrbitalSimulator.src.Orbits {
             get => _satellite;
             set {
                 _satellite = value;
-                if (_satellite != null && _satellite.GetParent() != this)
-                    GD.Print("Warning: Satellite should be a child of this Orbit node.");
+                if (_satellite != null && _satellite.GetParent() != this) GD.Print("Warning: Satellite should be a child of this Orbit node.");
                 UpdateOrbit();
             }
         }
@@ -87,7 +86,8 @@ namespace OrbitalSimulator.src.Orbits {
             }
 
             // Draw the full static orbit
-            var drawParams = new OrbitalParameters(
+            if (!Focus.IsInsideTree()) return;
+            OrbitalParameters drawParams = new(
                 Focus.GlobalPosition,
                 SemiMajorAxis,
                 Eccentricity,
@@ -101,10 +101,8 @@ namespace OrbitalSimulator.src.Orbits {
                 ? OrbitalPropagator.GenerateHyperbolicPoints(drawParams, Segments)
                 : OrbitalPropagator.GenerateEllipsePoints(drawParams, Segments);
 
-            if (_immediateMesh == null)
-                _immediateMesh = new ImmediateMesh();
-            else
-                _immediateMesh.ClearSurfaces();
+            if (_immediateMesh == null) _immediateMesh = new ImmediateMesh();
+            else _immediateMesh.ClearSurfaces();
 
             if (Filled) {
                 DrawFilledOrbit(points);
