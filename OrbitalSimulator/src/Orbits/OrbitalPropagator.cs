@@ -46,7 +46,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="μ">The standard gravitational parameter (μ)</param>
         /// <returns>A tuple containing the propagated position vector (r) and velocity vector (v) in the inertial reference frame at the specified time.</returns>
         /// <exception cref="ArgumentException">Thrown if non-elliptical orbit</exception>
-        public static (Vector3 r, Vector3 v) Propagate(OrbitalParameters op, float t, float μ = OrbitalParameters.mu) {
+        public static (Vector3 r, Vector3 v) Propagate(OrbitalParameters op, float t, float μ = OrbitalParameters.Mu) {
             float a = op.SemiMajorAxis;
             float e = op.Eccentricity;
 

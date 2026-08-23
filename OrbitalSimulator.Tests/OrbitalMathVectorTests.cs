@@ -1,10 +1,13 @@
 using Godot;
 using OrbitalSimulator.src.Orbits;
 
-namespace OrbitalSimulator.Tests {
-    public class OrbitalMathVectorTests {
+namespace OrbitalSimulator.Tests
+{
+    public class OrbitalMathVectorTests
+    {
         [Fact]
-        public void AngularMomentumVector_ShouldBeCorrect() {
+        public void AngularMomentumVector_ShouldBeCorrect()
+        {
             var r = new Vector3(7000f, 0f, 0f);
             var v = new Vector3(0f, 7.5f, 0f);  // roughly circular
 
@@ -15,7 +18,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void EccentricityVector_ShouldBeCorrect() {
+        public void EccentricityVector_ShouldBeCorrect()
+        {
             var r = new Vector3(8000f, 0f, 0f);
             var v = new Vector3(0f, 7.5f, 0f);
 
@@ -24,9 +28,10 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void OrbitalElementsFromState_CircularOrbit() {
+        public void OrbitalElementsFromState_CircularOrbit()
+        {
             var r = new Vector3(7000f, 0f, 0f);
-            var v = new Vector3(0f, MathF.Sqrt(OrbitalParameters.mu / 7000), 0f);
+            var v = new Vector3(0f, MathF.Sqrt(OrbitalParameters.Mu / 7000), 0f);
             OrbitalParameters parameters = OrbitalMath.CalculateOrbitalElementsFromState(Vector3.Zero, r, v);
 
             Assert.Equal(7000f, parameters.SemiMajorAxis, Program.EPS);
@@ -36,7 +41,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void OrbitalElementsFromState_EllipticalOrbit() {
+        public void OrbitalElementsFromState_EllipticalOrbit()
+        {
             // Simple test case
             var r = new Vector3(8000f, 0f, 0f);
             var v = new Vector3(0f, 8f, 1f);   // some inclination
@@ -49,7 +55,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void OrbitalElementsFromState_HyperbolicOrbit() {
+        public void OrbitalElementsFromState_HyperbolicOrbit()
+        {
             var r = new Vector3(5000f, 0f, 0f);
             var v = new Vector3(10f, 10f, 0f);   // high speed
 
@@ -60,7 +67,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void FlightPathAngle_ShouldBeCorrect() {
+        public void FlightPathAngle_ShouldBeCorrect()
+        {
             float e = 0.5f;
             float ν = 0f; // periapsis
             float phi = OrbitalMath.CalculateFlightPathAngle(e, ν);
@@ -72,7 +80,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void CalculateInclination_ShouldBeCorrect() {
+        public void CalculateInclination_ShouldBeCorrect()
+        {
             var h = new Vector3(0, 0, 1f);
             Assert.Equal(0f, OrbitalMath.CalculateInclination(h), Program.EPS);
 
@@ -83,7 +92,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void CalculateRAAN_ShouldBeCorrect() {
+        public void CalculateRAAN_ShouldBeCorrect()
+        {
             // 1. Equatorial orbit (h parallel to Z-axis) → RAAN = 0
             var hEquatorial = new Vector3(0, 0, 1f);
             Assert.Equal(0f, OrbitalMath.CalculateRAAN(hEquatorial));
@@ -99,7 +109,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void CalculateArgumentOfPeriapsis_ShouldBeCorrect() {
+        public void CalculateArgumentOfPeriapsis_ShouldBeCorrect()
+        {
             var h = new Vector3(0, 0, 1f);
             var eVec = new Vector3(1f, 0, 0);
 
@@ -109,7 +120,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void TrueAnomaly_VectorFunction_ShouldBeAccurate() {
+        public void TrueAnomaly_VectorFunction_ShouldBeAccurate()
+        {
             float a = 10000f;
             float e = 0.5f;
 
@@ -122,7 +134,7 @@ namespace OrbitalSimulator.Tests {
             // Build position vector (PQW frame)
             Vector3 r = new(rMag * MathF.Cos(ν), rMag * MathF.Sin(ν), 0f);
 
-            float μ = OrbitalParameters.mu;
+            float μ = OrbitalParameters.Mu;
             float h = MathF.Sqrt(μ * p);
 
             float vr = (μ / h) * e * MathF.Sin(ν);
@@ -141,7 +153,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void AngularMomentum_VectorAndScalar_ShouldMatch() {
+        public void AngularMomentum_VectorAndScalar_ShouldMatch()
+        {
             float a = 10000f;
             float e = 0.3f;
 
@@ -150,7 +163,7 @@ namespace OrbitalSimulator.Tests {
 
             float rMag = OrbitalMath.CalculateDistanceToSatellite(e, p, ν);
 
-            float μ = OrbitalParameters.mu;
+            float μ = OrbitalParameters.Mu;
             float h = OrbitalMath.CalculateSpecificAngularMomentum(p);
 
             float cosNu = MathF.Cos(ν);

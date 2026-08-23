@@ -1,10 +1,13 @@
 using Godot;
 using OrbitalSimulator.src.Orbits;
 
-namespace OrbitalSimulator.Tests {
-    public class OrbitalMathTests {
+namespace OrbitalSimulator.Tests
+{
+    public class OrbitalMathTests
+    {
         [Fact]
-        public void SemiParameter_ShouldBeCorrect() {
+        public void SemiParameter_ShouldBeCorrect()
+        {
             float a = 10000;
             float e = 0.1f;
 
@@ -14,7 +17,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void SemiMinorAxis_ShouldBeCorrect() {
+        public void SemiMinorAxis_ShouldBeCorrect()
+        {
             float a = 10000;
             float e = 0.5f;
 
@@ -25,7 +29,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void Apoapsis_ShouldBeCorrect() {
+        public void Apoapsis_ShouldBeCorrect()
+        {
             float a = 10000;
             float e = 0.2f;
 
@@ -35,7 +40,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void Periapsis_ShouldBeCorrect() {
+        public void Periapsis_ShouldBeCorrect()
+        {
             float a = 10000;
             float e = 0.2f;
 
@@ -45,19 +51,21 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void SpecificEnergy_FromA_ShouldBeCorrect() {
+        public void SpecificEnergy_FromA_ShouldBeCorrect()
+        {
             float a = 10000f;
 
             var result = OrbitalMath.CalculateSpecificOrbitalEnergy(a);
 
-            Assert.Equal(-(OrbitalParameters.mu / (2 * a)), result, Program.EPS);
+            Assert.Equal(-(OrbitalParameters.Mu / (2 * a)), result, Program.EPS);
         }
 
         [Fact]
-        public void OrbitPeriod_ShouldBeCorrect() {
+        public void OrbitPeriod_ShouldBeCorrect()
+        {
             float a = 7000f;
 
-            float expected = 2 * MathF.PI * MathF.Sqrt(MathF.Pow(a, 3) / OrbitalParameters.mu);
+            float expected = 2 * MathF.PI * MathF.Sqrt(MathF.Pow(a, 3) / OrbitalParameters.Mu);
 
             var result = OrbitalMath.CalculateOrbitalPeriod(a);
 
@@ -65,7 +73,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void DistanceToSatellite_ShouldBeCorrect() {
+        public void DistanceToSatellite_ShouldBeCorrect()
+        {
             float e = 0.1f;
             float p = 10000;
             float v = 0;
@@ -76,7 +85,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void Radius_ShouldMatch_PeriodicPoints() {
+        public void Radius_ShouldMatch_PeriodicPoints()
+        {
             float a = 10000f;
             float e = 0.2f;
 
@@ -90,11 +100,12 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void Energy_Formulas_ShouldMatch() {
+        public void Energy_Formulas_ShouldMatch()
+        {
             float a = 10000f;
 
             float r = a; // circular-ish assumption
-            float v = MathF.Sqrt(OrbitalParameters.mu / r);
+            float v = MathF.Sqrt(OrbitalParameters.Mu / r);
 
             float e1 = OrbitalMath.CalculateSpecificOrbitalEnergy(r: r, v: v);
             float e2 = OrbitalMath.CalculateSpecificOrbitalEnergy(a);
@@ -103,7 +114,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void CircularOrbit_ShouldBehaveCorrectly() {
+        public void CircularOrbit_ShouldBehaveCorrectly()
+        {
             float a = 10000f;
             float e = 0f;
 
@@ -115,7 +127,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void HighEccentricity_ShouldRemainStable() {
+        public void HighEccentricity_ShouldRemainStable()
+        {
             float a = 10000f;
             float e = 0.99f;
 
@@ -127,7 +140,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void Ellipse_ShouldBeSymmetric() {
+        public void Ellipse_ShouldBeSymmetric()
+        {
             float a = 10000f;
             float e = 0.3f;
 
@@ -142,7 +156,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void AxesRelationship_ShouldHold() {
+        public void AxesRelationship_ShouldHold()
+        {
             float a = 10000f;
             float e = 0.6f;
 
@@ -153,7 +168,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void GetOrbitType_ShouldClassifyCorrectly() {
+        public void GetOrbitType_ShouldClassifyCorrectly()
+        {
             Assert.Equal(OrbitType.Elliptical, OrbitalMath.GetOrbitType(0f));
             Assert.Equal(OrbitType.Elliptical, OrbitalMath.GetOrbitType(0.8f));
             Assert.Equal(OrbitType.Parabolic, OrbitalMath.GetOrbitType(1f));
@@ -161,7 +177,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void SemiMinorAxis_ShouldSupportHyperbolic() {
+        public void SemiMinorAxis_ShouldSupportHyperbolic()
+        {
             float a = 10000f;
             float e = 1.5f;
 
@@ -172,14 +189,16 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void Apoapsis_ShouldThrowForNonElliptical() {
+        public void Apoapsis_ShouldThrowForNonElliptical()
+        {
             Assert.Throws<ArgumentException>(() => OrbitalMath.CalculateApoapsis(1.0f, 10000f));
 
             Assert.Throws<ArgumentException>(() => OrbitalMath.CalculateApoapsis(1.5f, 10000f));
         }
 
         [Fact]
-        public void VisViva_Speed_ShouldBeCorrect() {
+        public void VisViva_Speed_ShouldBeCorrect()
+        {
             float a = 10000f;
             float e = 0.3f;
             //float p = OrbitalMathF.CalculateSemiParameter(e, a);
@@ -198,7 +217,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void VisViva_Hyperbolic_ShouldWork() {
+        public void VisViva_Hyperbolic_ShouldWork()
+        {
             float a = -8000f;        // negative a for hyperbolas
             float e = 1.2f;
             //float p = OrbitalMathF.CalculateSemiParameter(e, a);
@@ -211,7 +231,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void SpecificEnergy_From_r_v_ShouldMatch_From_a() {
+        public void SpecificEnergy_From_r_v_ShouldMatch_From_a()
+        {
             float a = 10000f;
             float r = 11000f;
 
@@ -224,7 +245,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void TrueAnomaly_FromRadiusAndVelocity_ShouldBeAccurate() {
+        public void TrueAnomaly_FromRadiusAndVelocity_ShouldBeAccurate()
+        {
             float a = 10000f;
             float e = 0.5f;
 
@@ -235,7 +257,7 @@ namespace OrbitalSimulator.Tests {
             float rMag = OrbitalMath.CalculateDistanceToSatellite(e, p, ν);
 
             // Construct consistent velocity using orbital mechanics
-            float μ = OrbitalParameters.mu;
+            float μ = OrbitalParameters.Mu;
             float h = MathF.Sqrt(μ * p);
 
             float vr = (μ / h) * e * MathF.Sin(ν);
@@ -247,13 +269,14 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void SemiParameter_FromAngularMomentum_ShouldMatch_FromAAndE() {
+        public void SemiParameter_FromAngularMomentum_ShouldMatch_FromAAndE()
+        {
             float a = 12000f;
             float e = 0.3f;
 
             float p1 = OrbitalMath.CalculateSemiParameter(e, a);
 
-            float h = MathF.Sqrt(OrbitalParameters.mu * p1);
+            float h = MathF.Sqrt(OrbitalParameters.Mu * p1);
             float p2 = OrbitalMath.CalculateSemiParameterFromAngularMomentum(h);
 
             Assert.Equal(p1, p2, Program.EPS);
@@ -261,13 +284,15 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void Distance_ShouldBeSymmetricAroundZero() {
+        public void Distance_ShouldBeSymmetricAroundZero()
+        {
             float a = 10000f;
             float e = 0.6f;
 
             float p = OrbitalMath.CalculateSemiParameter(e, a);
 
-            for (float ν = 0.1f; ν < MathF.PI; ν += 0.2f) {
+            for (float ν = 0.1f; ν < MathF.PI; ν += 0.2f)
+            {
                 float r1 = OrbitalMath.CalculateDistanceToSatellite(e, p, ν);
                 float r2 = OrbitalMath.CalculateDistanceToSatellite(e, p, -ν);
 
@@ -277,7 +302,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void NearParabolicOrbit_ShouldNotCrash() {
+        public void NearParabolicOrbit_ShouldNotCrash()
+        {
             float a = 10000f;
             float e = 0.999f;
 
@@ -290,7 +316,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void NearCircularOrbit_ShouldRemainStable() {
+        public void NearCircularOrbit_ShouldRemainStable()
+        {
             float a = 10000f;
             float e = 1e-6f;
 
@@ -303,7 +330,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void FlightPathAngle_ShouldBeZero_AtPeriapsisAndApoapsis() {
+        public void FlightPathAngle_ShouldBeZero_AtPeriapsisAndApoapsis()
+        {
             float e = 0.5f;
 
             float phiPe = OrbitalMath.CalculateFlightPathAngle(e, 0f);
@@ -315,7 +343,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void AngularMomentum_ShouldMatch_FromP() {
+        public void AngularMomentum_ShouldMatch_FromP()
+        {
             float a = 10000f;
             float e = 0.4f;
 
@@ -323,12 +352,13 @@ namespace OrbitalSimulator.Tests {
 
             float h = OrbitalMath.CalculateSpecificAngularMomentum(p);
 
-            Assert.Equal(p, h * h / OrbitalParameters.mu, Program.EPS);
+            Assert.Equal(p, h * h / OrbitalParameters.Mu, Program.EPS);
         }
 
 
         [Fact]
-        public void OrbitalVelocity_CircularOrbit_ShouldEqualCircularVelocity() {
+        public void OrbitalVelocity_CircularOrbit_ShouldEqualCircularVelocity()
+        {
             float a = 8000f;
             float r = a;
 
@@ -340,7 +370,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void HighEccentricity_Hyperbolic_ShouldRemainStable() {
+        public void HighEccentricity_Hyperbolic_ShouldRemainStable()
+        {
             float a = -10000f; // Negative a for hyperbolic orbits!
             float e = 1.5f;
 
@@ -353,7 +384,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void CalculateSemiMajorAxis_FromApPe_ShouldBeCorrect() {
+        public void CalculateSemiMajorAxis_FromApPe_ShouldBeCorrect()
+        {
             float ap = 12000f;
             float pe = 8000f;
 
@@ -363,7 +395,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void CalculateSemiMajorAxis_FromPeriod_ShouldBeCorrect() {
+        public void CalculateSemiMajorAxis_FromPeriod_ShouldBeCorrect()
+        {
             float a = 7000f;
             float expectedPeriod = OrbitalMath.CalculateOrbitalPeriod(a);
 
@@ -374,18 +407,20 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void MeanOrbitalVelocity_Circular_ShouldBeCorrect() {
+        public void MeanOrbitalVelocity_Circular_ShouldBeCorrect()
+        {
             float r = 7000f;
 
             float v = OrbitalMath.CalculateCircularVelocity(r);
-            float expected = MathF.Sqrt(OrbitalParameters.mu / r);
+            float expected = MathF.Sqrt(OrbitalParameters.Mu / r);
 
             Assert.Equal(expected, v, Program.EPS);
         }
 
 
         [Fact]
-        public void MeanOrbitalVelocity_FromPeriod_ShouldBeCorrect() {
+        public void MeanOrbitalVelocity_FromPeriod_ShouldBeCorrect()
+        {
             float a = 7000f;
             float period = OrbitalMath.CalculateOrbitalPeriod(a);
 

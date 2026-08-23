@@ -14,14 +14,11 @@ namespace OrbitalSimulator.src.Orbits {
                 GD.Print(args.Join());
             }
 
-
             float ftTokmConversion = 0.0003048f; // ft → km
 
             Vector3 r = new(4.1852f, 6.2778f, 10.463f);
             r *= 1e7f;
             r *= ftTokmConversion;
-
-
 
             Vector3 v = new(2.5936f, 5.1872f, 0);
             v *= 1e4f;

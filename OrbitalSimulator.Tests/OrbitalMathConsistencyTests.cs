@@ -1,10 +1,13 @@
 using Godot;
 using OrbitalSimulator.src.Orbits;
 
-namespace OrbitalSimulator.Tests {
-    public class OrbitalMathConsistencyTests {
+namespace OrbitalSimulator.Tests
+{
+    public class OrbitalMathConsistencyTests
+    {
         [Fact]
-        public void FullOrbitalRoundtrip_Elliptical_ShouldBeConsistent() {
+        public void FullOrbitalRoundtrip_Elliptical_ShouldBeConsistent()
+        {
             float a = 10000f;
             float e = 0.3f;
             float i = MathF.PI / 6;
@@ -18,13 +21,15 @@ namespace OrbitalSimulator.Tests {
         }
 
 
-        private static float AngleDiff(float a, float b) {
+        private static float AngleDiff(float a, float b)
+        {
             float diff = MathF.Abs(a - b) % (2 * MathF.PI);
             return MathF.Min(diff, 2 * MathF.PI - diff);
         }
 
 
-        private static void ValidateOrbitRoundtrip(OrbitalParameters orbit) {
+        private static void ValidateOrbitRoundtrip(OrbitalParameters orbit)
+        {
             var (r, v) = OrbitalMath.CalculateOrbitalVectorsFromParameters(orbit);
             var reconstructed = OrbitalMath.CalculateOrbitalElementsFromState(Vector3.Zero, r, v);
 
@@ -34,21 +39,24 @@ namespace OrbitalSimulator.Tests {
             Assert.True(MathF.Abs(orbit.Inclination - reconstructed.Inclination) < Program.EPS);
 
             // --- RAAN (only if well-defined) ---
-            if (MathF.Abs(MathF.Sin(orbit.Inclination)) > Program.EPS) {
+            if (MathF.Abs(MathF.Sin(orbit.Inclination)) > Program.EPS)
+            {
                 Assert.True(AngleDiff(
                     orbit.RightAscensionOfAscendingNode,
                     reconstructed.RightAscensionOfAscendingNode) < Program.EPS);
             }
 
             // --- Argument of periapsis (skip near circular) ---
-            if (orbit.Eccentricity > Program.EPS) {
+            if (orbit.Eccentricity > Program.EPS)
+            {
                 Assert.True(AngleDiff(
                     orbit.ArgumentOfPeriapsis,
                     reconstructed.ArgumentOfPeriapsis) < Program.EPS);
             }
 
             // --- True anomaly (via argument of latitude) ---
-            if (orbit.Eccentricity > Program.EPS) {
+            if (orbit.Eccentricity > Program.EPS)
+            {
                 float u1 = orbit.ArgumentOfPeriapsis + orbit.TrueAnomaly;
                 float u2 = reconstructed.ArgumentOfPeriapsis + reconstructed.TrueAnomaly;
 
@@ -67,7 +75,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void FullOrbitalRoundtrip_Hyperbolic_ShouldBeConsistent() {
+        public void FullOrbitalRoundtrip_Hyperbolic_ShouldBeConsistent()
+        {
             float a = -8000f;
             float e = 1.4f;
 
@@ -83,7 +92,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void OrbitalElements_ShouldBeConsistent() {
+        public void OrbitalElements_ShouldBeConsistent()
+        {
             float a = 10000f;
             float e = 0.3f;
 
@@ -109,7 +119,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void ApPe_ShouldBeConsistent() {
+        public void ApPe_ShouldBeConsistent()
+        {
             float ap = 15000f;
             float pe = 5000f;
 
@@ -125,7 +136,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void RadiusFormula_ShouldBeConsistent() {
+        public void RadiusFormula_ShouldBeConsistent()
+        {
             float a = 10000f;
             float e = 0.4f;
 
@@ -142,7 +154,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void OrbitPeriod_ShouldBeConsistent() {
+        public void OrbitPeriod_ShouldBeConsistent()
+        {
             float a = 10000f;
 
             float period = OrbitalMath.CalculateOrbitalPeriod(a);
@@ -153,7 +166,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void TrueAnomaly_EccentricAnomaly_ShouldBeConsistent() {
+        public void TrueAnomaly_EccentricAnomaly_ShouldBeConsistent()
+        {
             float e = 0.3f;
             float E = MathF.PI / 3; // 60 degrees eccentric anomaly
 
@@ -164,7 +178,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void MeanAnomaly_ShouldBeConsistent() {
+        public void MeanAnomaly_ShouldBeConsistent()
+        {
             float e = 0.4f;
             float M = MathF.PI / 4; // mean anomaly
 
@@ -178,7 +193,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void Constructor_WithSixParameters_ShouldCorrectlyCalculateAllDerivedValues() {
+        public void Constructor_WithSixParameters_ShouldCorrectlyCalculateAllDerivedValues()
+        {
             // Arrange - Realistic elliptical orbit (similar to your failing roundtrip test)
             Vector3 centralBody = Vector3.Zero; // Earth-centered
             float semiMajorAxis = 8000f;           // km
@@ -208,7 +224,7 @@ namespace OrbitalSimulator.Tests {
             Assert.Equal(expectedApoapsis, orbit.Apoapsis, Program.EPS);
 
             // Orbital period (using mu from the class)
-            float expectedPeriod = 2 * MathF.PI * MathF.Sqrt(MathF.Pow(semiMajorAxis, 3) / OrbitalParameters.mu);
+            float expectedPeriod = 2 * MathF.PI * MathF.Sqrt(MathF.Pow(semiMajorAxis, 3) / OrbitalParameters.Mu);
 
             Assert.Equal(expectedPeriod, orbit.OrbitalPeriod, 1); // 1 second tolerance is fine
 
@@ -220,7 +236,8 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void Constructor_HyperbolicOrbit_ShouldSetApoapsisToNaN() {
+        public void Constructor_HyperbolicOrbit_ShouldSetApoapsisToNaN()
+        {
             var orbit = new OrbitalParameters(Vector3.Zero, 8000f, 1.2f, 0.5f, 0.3f, 0f, 0f);
 
             Assert.Equal(OrbitType.Hyperbolic, orbit.Type);
@@ -230,10 +247,12 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void FullOrbitalRoundtrip_Hyperbolic_Randomised() {
+        public void FullOrbitalRoundtrip_Hyperbolic_Randomised()
+        {
             var rnd = new Random(123);
 
-            for (int k = 0; k < 200; k++) {
+            for (int k = 0; k < 200; k++)
+            {
 
                 float a = -5000f - (float)rnd.NextDouble() * 20000f;
                 float e = 1.1f + (float)rnd.NextDouble();
@@ -251,10 +270,12 @@ namespace OrbitalSimulator.Tests {
         }
 
         [Fact]
-        public void FullOrbitalRoundtrip_Elliptical_Randomised() {
+        public void FullOrbitalRoundtrip_Elliptical_Randomised()
+        {
             var rnd = new Random(42);
 
-            for (int k = 0; k < 500; k++) {
+            for (int k = 0; k < 500; k++)
+            {
 
                 float a = 7000f + (float)rnd.NextDouble() * 20000f;
 
@@ -277,7 +298,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void Eccentricity_AllMethods_ShouldMatch() {
+        public void Eccentricity_AllMethods_ShouldMatch()
+        {
             float a = 10000f;
             float e = 0.4f;
 
@@ -295,7 +317,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void Distance_ShouldMatch_PeriapsisAndApoapsisFunctions() {
+        public void Distance_ShouldMatch_PeriapsisAndApoapsisFunctions()
+        {
             float a = 10000f;
             float e = 0.3f;
 
@@ -313,7 +336,8 @@ namespace OrbitalSimulator.Tests {
 
 
         [Fact]
-        public void Energy_ShouldBeConstant_AlongOrbit() {
+        public void Energy_ShouldBeConstant_AlongOrbit()
+        {
             float a = 10000f;
             float e = 0.5f;
 

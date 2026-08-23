@@ -24,7 +24,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="h">The specific angular momentum h, typically in units of m²/s.</param>
         /// <param name="μ">The standard gravitational parameter of the central body.</param>
         /// <returns>The semi-latus rectum p</returns>
-        public static float CalculateSemiParameterFromAngularMomentum(float h, float μ = OrbitalParameters.mu) {
+        public static float CalculateSemiParameterFromAngularMomentum(float h, float μ = OrbitalParameters.Mu) {
             return h * h / μ;
         }
 
@@ -65,7 +65,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="μ">Gravitational parameter</param>
         /// <returns>Semi-major Axis a</returns>
         /// <exception cref="ArgumentException">Throws if μ or period is not positive</exception>
-        public static float CalculateSemiMajorAxisFromPeriod(float period, float μ = OrbitalParameters.mu) {
+        public static float CalculateSemiMajorAxisFromPeriod(float period, float μ = OrbitalParameters.Mu) {
             if (μ <= 0) throw new ArgumentException("GM must be positive");
             if (period <= 0) throw new ArgumentException("Orbital period must be positive");
 
@@ -133,7 +133,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="μ">Gravitational parameter</param>
         /// <returns>The orbital period T, in seconds</returns>
         /// <exception cref="ArgumentException">Thrown if a or GM <= 0</exception>
-        public static float CalculateOrbitalPeriod(float a, float μ = OrbitalParameters.mu) {
+        public static float CalculateOrbitalPeriod(float a, float μ = OrbitalParameters.Mu) {
             if (a <= 0 || μ <= 0) throw new ArgumentException("Orbital period is only defined for elliptical orbits (a > 0)");
 
             return 2 * MathF.PI * MathF.Sqrt(MathF.Pow(a, 3) / μ);
@@ -181,7 +181,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="v">The velocity vector of the orbiting body, in Cartesian coordinates.</param>
         /// <param name="μ">The standard gravitational parameter (μ).</param>
         /// <returns>Orbital eccentricity vector e. The direction points toward periapsis, and the magnitude equals the orbit's eccentricity.</returns>
-        public static Vector3 CalculateEccentricityVector(Vector3 r, Vector3 v, float μ = OrbitalParameters.mu) {
+        public static Vector3 CalculateEccentricityVector(Vector3 r, Vector3 v, float μ = OrbitalParameters.Mu) {
             if (μ <= 0) throw new ArgumentException("GM must be positive");
 
             float rMag = r.Length();
@@ -259,7 +259,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="μ">Gravitational parameter</param>
         /// <returns>Specific orbital energy e/Ɛ</returns>
         /// <exception cref="ArgumentException">Thrown if a not positive</exception>
-        public static float CalculateSpecificOrbitalEnergy(float a, float μ = OrbitalParameters.mu) {
+        public static float CalculateSpecificOrbitalEnergy(float a, float μ = OrbitalParameters.Mu) {
             if (MathF.Abs(a) < Program.EPS) throw new ArgumentException("Semi-major axis cannot be zero");
             return -(μ / (2 * a));
         }
@@ -273,7 +273,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="μ">Gravitational parameter</param>
         /// <returns>Specific orbital energy e/Ɛ</returns>
         /// <exception cref="ArgumentException">Throws if radius not positive</exception>
-        public static float CalculateSpecificOrbitalEnergy(float r, float v, float μ = OrbitalParameters.mu) {
+        public static float CalculateSpecificOrbitalEnergy(float r, float v, float μ = OrbitalParameters.Mu) {
             if (r <= 0) throw new ArgumentException("Radius must be positive");
 
             return (v * v) / 2 - (μ / r);
@@ -299,7 +299,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="r">Distance</param>
         /// <returns>Mean orbital velocity v aproximation</returns>
         /// <exception cref="ArgumentException">Throws if μ or r is not positive</exception>
-        public static float CalculateCircularVelocity(float r, float μ = OrbitalParameters.mu) {
+        public static float CalculateCircularVelocity(float r, float μ = OrbitalParameters.Mu) {
             if (μ <= 0 || r <= 0) throw new ArgumentException("GM and radius must be positive");
             return MathF.Sqrt(μ / r);
         }
@@ -326,7 +326,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// not specified.</param>
         /// <returns>The mean motion of the orbit, in radians per second.</returns>
         /// <exception cref="ArgumentException">Thrown if <paramref name="a"/> is less than or equal to zero.</exception>
-        public static float CalculateMeanMotion(float a, float μ = OrbitalParameters.mu) {
+        public static float CalculateMeanMotion(float a, float μ = OrbitalParameters.Mu) {
             if (a <= 0) throw new ArgumentException("Mean motion only defined for elliptical orbits (a > 0)");
 
             return MathF.Sqrt(μ / (a * a * a));
@@ -341,7 +341,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="μ">Gravitational parameter μ</param>
         /// <returns>Returns orbital speed v</returns>
         /// <exception cref="ArgumentException">Throws if radius or GM is not positive</exception>
-        public static float CalculateOrbitalVelocity(float a, float r, float μ = OrbitalParameters.mu) {
+        public static float CalculateOrbitalVelocity(float a, float r, float μ = OrbitalParameters.Mu) {
             if (μ <= 0) throw new ArgumentException("GM must be positive");
             if (r <= 0) throw new ArgumentException("Radius must be positive");
 
@@ -437,7 +437,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="μ">Gravitational parameter μ</param>
         /// <returns>Specific angular momentum h</returns>
         /// <exception cref="ArgumentException">Throws if μ or p is not positive</exception>
-        public static float CalculateSpecificAngularMomentum(float p, float μ = OrbitalParameters.mu) {
+        public static float CalculateSpecificAngularMomentum(float p, float μ = OrbitalParameters.Mu) {
             if (μ <= 0 || p <= 0) throw new ArgumentException("GM and p must be positive");
             return MathF.Sqrt(μ * p);
         }
@@ -555,7 +555,7 @@ namespace OrbitalSimulator.src.Orbits {
         }
 
 
-        public static OrbitalParameters CalculateOrbitalElementsFromState(Vector3 F, Vector3 r, Vector3 v, float mu = OrbitalParameters.mu) {
+        public static OrbitalParameters CalculateOrbitalElementsFromState(Vector3 F, Vector3 r, Vector3 v, float mu = OrbitalParameters.Mu) {
             if (mu <= 0) throw new ArgumentException("GM must be positive");
 
             float rMag = r.Length();
@@ -611,7 +611,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="orbit">Six basic orbital parameters to calculate from</param>
         /// <param name="μ">Gravitational parameter</param>
         /// <returns>Vectors r and v, which magnitudes gives us orbital height and velocity.</returns>
-        public static (Vector3 r, Vector3 v) CalculateOrbitalVectorsFromParameters(OrbitalParameters op, float μ = OrbitalParameters.mu) {
+        public static (Vector3 r, Vector3 v) CalculateOrbitalVectorsFromParameters(OrbitalParameters op, float μ = OrbitalParameters.Mu) {
             float p = op.SemiParameter;
             float e = op.Eccentricity;
             float ν = NormalizeAngle(op.TrueAnomaly);
