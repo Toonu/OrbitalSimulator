@@ -5,64 +5,65 @@ using System.Collections.Generic;
 namespace OrbitalSimulator.src.Orbits {
     [Tool]
     public partial class Orbit : MeshInstance3D {
-        [Export] public Node3D Focus { get; set; }
-
-        private Node3D _satellite;
+        [Export] private Node3D Focus { get; set; }
+        [Export] private Label InfoLabel { get; set; }
+        private Node3D satellite;
         [Export]
         public Node3D Satellite {
-            get => _satellite;
+            get => satellite;
             set {
-                _satellite = value;
-                if (_satellite != null && _satellite.GetParent() != this) GD.Print("Warning: Satellite should be a child of this Orbit node.");
+                satellite = value;
+                if (satellite != null && satellite.GetParent() != this) GD.Print("Warning: Satellite should be a child of this Orbit node.");
                 UpdateOrbit();
             }
         }
 
-        private bool _visibleInEditor = true;
-        [Export] public bool VisibleInEditor { get => _visibleInEditor; set { _visibleInEditor = value; UpdateOrbit(); } }
+        private bool visibleInEditor = true;
+        [Export] public bool VisibleInEditor { get => visibleInEditor; set { visibleInEditor = value; UpdateOrbit(); } }
 
-        private bool _filled = false;
-        [Export] public bool Filled { get => _filled; set { _filled = value; UpdateOrbit(); } }
+        private bool filled = false;
+        [Export] public bool Filled { get => filled; set { filled = value; UpdateOrbit(); } }
 
-        private bool _simulate = false;
+        private bool simulate = false;
         [Export]
         public bool Simulate {
-            get => _simulate;
-            set { _simulate = value; _simulationTime = 0f; UpdateOrbit(); }
+            get => simulate;
+            set { simulate = value; simulationTime = 0f; UpdateOrbit(); }
         }
 
         [Export(PropertyHint.Range, "0.01,100,0.1")]
         public float SimulationSpeed { get; set; } = 10.0f;   // Higher default for visibility
 
-        private float _semiMajorAxis = 8f;
-        [Export] public float SemiMajorAxis { get => _semiMajorAxis; set { _semiMajorAxis = value; UpdateOrbit(); } }
+        private float semiMajorAxis = 8f;
+        [Export] public float SemiMajorAxis { get => semiMajorAxis; set { semiMajorAxis = value; UpdateOrbit(); } }
 
-        private float _eccentricity = 0.2f;
+        private float eccentricity = 0.2f;
         [Export(PropertyHint.Range, "0,2,0.01,or_greater")]
-        public float Eccentricity { get => _eccentricity; set { _eccentricity = value; UpdateOrbit(); } }
+        public float Eccentricity { get => eccentricity; set { eccentricity = value; UpdateOrbit(); } }
 
-        private float _inclination = 0.3f;
+        private float inclination = 0.3f;
         [Export(PropertyHint.Range, "0,360,0.1,radians_as_degrees")]
-        public float Inclination { get => _inclination; set { _inclination = value; UpdateOrbit(); } }
+        public float Inclination { get => inclination; set { inclination = value; UpdateOrbit(); } }
 
-        private float _raan = 0.5f;
+        private float raan = 0.5f;
         [Export(PropertyHint.Range, "0,360,0.1,radians_as_degrees")]
-        public float RightAscensionOfAscendingNode { get => _raan; set { _raan = value; UpdateOrbit(); } }
+        public float RightAscensionOfAscendingNode { get => raan; set { raan = value; UpdateOrbit(); } }
 
-        private float _argumentOfPeriapsis = 1.0f;
+        private float argumentOfPeriapsis = 1.0f;
         [Export(PropertyHint.Range, "0,360,0.1,radians_as_degrees")]
-        public float ArgumentOfPeriapsis { get => _argumentOfPeriapsis; set { _argumentOfPeriapsis = value; UpdateOrbit(); } }
+        public float ArgumentOfPeriapsis { get => argumentOfPeriapsis; set { argumentOfPeriapsis = value; UpdateOrbit(); } }
 
-        private float _trueAnomaly = 0.0f;
+        private float trueAnomaly = 0.0f;
         [Export(PropertyHint.Range, "0,360,0.1,radians_as_degrees")]
-        public float TrueAnomaly { get => _trueAnomaly; set { _trueAnomaly = value; UpdateOrbit(); } }
+        public float TrueAnomaly { get => trueAnomaly; set { trueAnomaly = value; UpdateOrbit(); } }
 
         [Export] public int Segments { get; set; } = 200;
         [Export] public Color LineColor { get; set; } = Colors.Cyan;
         [Export] public Color FillColor { get; set; } = new Color(0.2f, 0.6f, 1.0f, 0.15f);
 
-        private ImmediateMesh _immediateMesh;
-        private float _simulationTime = 0f;
+        private ImmediateMesh immediateMesh;
+        private float simulationTime = 0f;
+        private OrbitalParameters orbitalParameters;
 
         public override void _Ready() {
             Focus ??= GetParent() as Node3D;
@@ -71,7 +72,7 @@ namespace OrbitalSimulator.src.Orbits {
 
         public override void _Process(double delta) {
             if (Simulate && !Engine.IsEditorHint()) {
-                _simulationTime += (float)delta * SimulationSpeed;
+                simulationTime += (float)delta * SimulationSpeed;
                 UpdateSatellitePositionFromTime();
             }
         }
@@ -101,8 +102,8 @@ namespace OrbitalSimulator.src.Orbits {
                 ? OrbitalPropagator.GenerateHyperbolicPoints(drawParams, Segments)
                 : OrbitalPropagator.GenerateEllipsePoints(drawParams, Segments);
 
-            if (_immediateMesh == null) _immediateMesh = new ImmediateMesh();
-            else _immediateMesh.ClearSurfaces();
+            if (immediateMesh == null) immediateMesh = new ImmediateMesh();
+            else immediateMesh.ClearSurfaces();
 
             if (Filled) {
                 DrawFilledOrbit(points);
@@ -111,15 +112,20 @@ namespace OrbitalSimulator.src.Orbits {
                 DrawLineOrbit(points);
             }
 
-            Mesh = _immediateMesh;
+            Mesh = immediateMesh;
 
             UpdateSatellitePosition();
+            UpdateInfoLabel();
+        }
+
+        private void UpdateInfoLabel() {
+            InfoLabel?.Text = orbitalParameters.ToString();
         }
 
         private void UpdateSatellitePosition() {
             if (Satellite == null) return;
 
-            var paramsNow = new OrbitalParameters(
+            orbitalParameters = new OrbitalParameters(
                 Focus.GlobalPosition,
                 SemiMajorAxis,
                 Eccentricity,
@@ -130,7 +136,7 @@ namespace OrbitalSimulator.src.Orbits {
             );
 
             try {
-                var (worldPos, _) = OrbitalMath.CalculateOrbitalVectorsFromParameters(paramsNow);
+                var (worldPos, _) = OrbitalMath.CalculateOrbitalVectorsFromParameters(orbitalParameters);
                 Satellite.Position = worldPos - GlobalPosition;
             } catch (Exception ex) {
                 GD.PrintErr("Failed to update satellite: ", ex.Message);
@@ -144,14 +150,14 @@ namespace OrbitalSimulator.src.Orbits {
                 Focus.GlobalPosition,
                 SemiMajorAxis,
                 Eccentricity,
-                TrueAnomaly,           // This is the starting True Anomaly
+                TrueAnomaly,
                 Inclination,
                 RightAscensionOfAscendingNode,
                 ArgumentOfPeriapsis
             );
 
             try {
-                var (worldPos, _) = OrbitalPropagator.Propagate(initialParams, _simulationTime);
+                var (worldPos, _) = OrbitalPropagator.Propagate(initialParams, simulationTime);
 
                 Satellite.Position = worldPos - GlobalPosition;
             } catch (Exception ex) {
@@ -160,33 +166,33 @@ namespace OrbitalSimulator.src.Orbits {
         }
 
         public void ClearOrbit() {
-            _immediateMesh?.ClearSurfaces();
+            immediateMesh?.ClearSurfaces();
         }
 
         // ==================== Drawing Methods ====================
         private void DrawLineOrbit(List<Vector3> points) {
-            _immediateMesh.SurfaceBegin(Mesh.PrimitiveType.LineStrip);
-            _immediateMesh.SurfaceSetColor(LineColor);
+            immediateMesh.SurfaceBegin(Mesh.PrimitiveType.LineStrip);
+            immediateMesh.SurfaceSetColor(LineColor);
             foreach (var p in points)
-                _immediateMesh.SurfaceAddVertex(p);
-            _immediateMesh.SurfaceEnd();
+                immediateMesh.SurfaceAddVertex(p);
+            immediateMesh.SurfaceEnd();
 
             ApplyLineMaterial();
         }
 
         private void DrawFilledOrbit(List<Vector3> points) {
-            _immediateMesh.SurfaceBegin(Mesh.PrimitiveType.Triangles);
-            _immediateMesh.SurfaceSetColor(FillColor);
+            immediateMesh.SurfaceBegin(Mesh.PrimitiveType.Triangles);
+            immediateMesh.SurfaceSetColor(FillColor);
 
             Vector3 center = Focus.GlobalPosition - GlobalPosition;
 
             for (int i = 0; i < points.Count - 1; i++) {
-                _immediateMesh.SurfaceAddVertex(center);
-                _immediateMesh.SurfaceAddVertex(points[i] - GlobalPosition);
-                _immediateMesh.SurfaceAddVertex(points[i + 1] - GlobalPosition);
+                immediateMesh.SurfaceAddVertex(center);
+                immediateMesh.SurfaceAddVertex(points[i] - GlobalPosition);
+                immediateMesh.SurfaceAddVertex(points[i + 1] - GlobalPosition);
             }
 
-            _immediateMesh.SurfaceEnd();
+            immediateMesh.SurfaceEnd();
 
             ApplyFillMaterial();
         }

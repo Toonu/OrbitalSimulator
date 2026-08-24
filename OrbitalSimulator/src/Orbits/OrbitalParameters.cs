@@ -1,4 +1,6 @@
 using Godot;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OrbitalSimulator.src.Orbits {
     /// <summary>
@@ -18,8 +20,8 @@ namespace OrbitalSimulator.src.Orbits {
         public const float Mu = 398600f;
         /// <summary>
         /// Classification of the orbit based on eccentricity:
-        /// - Elliptical (0 ≤ 1)
-        /// - Parabolic (e = 1)
+        /// - Elliptical (0 ≤ e < 1)
+        /// - Parabolic (0 = 1)
         /// - Hyperbolic (e > 1)
         /// </summary>
         public OrbitType Type { get; set; }
@@ -31,7 +33,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <summary>
         /// Semi-major axis (a)
         /// Half the longest diameter of the elliptical orbit.
-        /// For hyperbolic orbits it is negative.
+        /// Negative for hyperbolic orbits.
         /// </summary>
         public float SemiMajorAxis { get; set; }
         /// <summary>
@@ -151,10 +153,10 @@ namespace OrbitalSimulator.src.Orbits {
         private void RecalculateDerivedValues() {
             Type = OrbitalMath.GetOrbitType(Eccentricity);
             SemiParameter = OrbitalMath.CalculateSemiParameter(Eccentricity, SemiMajorAxis);
-            try {
+            if (Type == OrbitType.Elliptical) {
                 //Fails for hyperbolic orbits, so we catch the exception and leave SemiMinorAxis as 0 in that case.
                 SemiMinorAxis = OrbitalMath.CalculateSemiMinorAxis(Eccentricity, SemiMajorAxis);
-            } catch { }
+            }
 
 
             Periapsis = OrbitalMath.CalculatePeriapsis(Eccentricity, SemiMajorAxis);
@@ -163,8 +165,8 @@ namespace OrbitalSimulator.src.Orbits {
 
             OrbitalPeriod = Type == OrbitType.Elliptical ? OrbitalMath.CalculateOrbitalPeriod(SemiMajorAxis, Mu) : float.NaN;
 
-            if (EccentricAnomaly == 0) EccentricAnomaly = OrbitalMath.CalculateEccentricAnomaly(Eccentricity, TrueAnomaly);
-            if (MeanAnomaly == 0) MeanAnomaly = OrbitalMath.CalculateMeanAnomaly(EccentricAnomaly, Eccentricity);
+            EccentricAnomaly = OrbitalMath.CalculateEccentricAnomaly(Eccentricity, TrueAnomaly);
+            MeanAnomaly = OrbitalMath.CalculateMeanAnomaly(EccentricAnomaly, Eccentricity);
 
             SpecificOrbitalEnergy = OrbitalMath.CalculateSpecificOrbitalEnergy(SemiMajorAxis);
             SpecificAngularMomentum = OrbitalMath.CalculateSpecificAngularMomentum(SemiParameter);
@@ -187,18 +189,20 @@ namespace OrbitalSimulator.src.Orbits {
 
 
         public override string ToString() {
-            return $"[ORBIT]\n" +
-                $"F = {Focus}\n" +
-                $"a = {SemiMajorAxis}m\n" +
-                $"b = {SemiMinorAxis}m\n" +
-                $"p = {SemiParameter}m\n" +
-                $"v = {OrbitalMath.ToDegrees(TrueAnomaly)}°\n" +
-                $"i = {OrbitalMath.ToDegrees(Inclination)}°\n" +
-                $"Ω = {OrbitalMath.ToDegrees(RightAscensionOfAscendingNode)}°\n" +
-                $"ω = {OrbitalMath.ToDegrees(ArgumentOfPeriapsis)}°\n" +
-                $"ε = {OrbitalMath.ToDegrees(SpecificOrbitalEnergy)}km²/s²\n" +
-                $"h = {OrbitalMath.ToDegrees(SpecificAngularMomentum)}km/s²\n" +
-                $"φ = {OrbitalMath.ToDegrees(FlightPathAngle)}°";
+            List<string> values = [];
+            values.Add($"[ORBIT]");
+            values.Add($"F = {Focus}");
+            values.Add($"a = {SemiMajorAxis}km");
+            values.Add($"b = {SemiMinorAxis}km");
+            values.Add($"p = {SemiParameter}km");
+            values.Add($"ν = {OrbitalMath.ToDegrees(TrueAnomaly)}°");
+            values.Add($"i = {OrbitalMath.ToDegrees(Inclination)}°");
+            values.Add($"Ω = {OrbitalMath.ToDegrees(RightAscensionOfAscendingNode)}°");
+            values.Add($"ω = {OrbitalMath.ToDegrees(ArgumentOfPeriapsis)}°");
+            values.Add($"φ = {OrbitalMath.ToDegrees(FlightPathAngle)}°");
+            values.Add($"ε = {SpecificOrbitalEnergy}km²/s²");
+            values.Add($"h = {SpecificAngularMomentum}km²/s²");
+            return string.Join('\n', values);
         }
 
 
