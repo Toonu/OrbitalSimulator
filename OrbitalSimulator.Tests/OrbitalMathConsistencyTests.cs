@@ -238,7 +238,7 @@ namespace OrbitalSimulator.Tests
         [Fact]
         public void Constructor_HyperbolicOrbit_ShouldSetApoapsisToNaN()
         {
-            var orbit = new OrbitalParameters(Vector3.Zero, 8000f, 1.2f, 0.5f, 0.3f, 0f, 0f);
+            var orbit = new OrbitalParameters(Vector3.Zero, -8000f, 1.2f, 0.5f, 0.3f, 0f, 0f);
 
             Assert.Equal(OrbitType.Hyperbolic, orbit.Type);
             Assert.True(float.IsNaN(orbit.Apoapsis));

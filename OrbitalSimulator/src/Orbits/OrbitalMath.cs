@@ -9,12 +9,29 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="e">Eccentricity</param>
         /// <param name="a">Semi-Major Axis</param>
         /// <returns>Semi Parameter / Semi Latus Rectum p</returns>
-        /// <exception cref="ArgumentException">Throws when a is negative</exception>
+        /// <exception cref="ArgumentException">Thrown when a is zero, or when e and a have an inconsistent sign
+        /// (a &gt; 0 with e &gt; 1, or a &lt; 0 with e &lt; 1).</exception>
         public static float CalculateSemiParameter(float e, float a) {
-
             if (a == 0) throw new ArgumentException("Semi-major axis cannot be zero");
-            // For hyperbolas a is negative, so p = |a| * (e² - 1) becomes positive
-            return MathF.Abs(a) * MathF.Abs(1 - e * e);
+            if (e < 0) throw new ArgumentException("Eccentricity cannot be negative");
+            if (a > 0 && e > 1f) throw new ArgumentException("Semi-major axis must be negative for hyperbolic orbits (e > 1)");
+            if (a < 0 && e < 1f) throw new ArgumentException("Semi-major axis must be positive for elliptical orbits (e < 1)");
+
+            // p = a * (1 - e²). Signs cancel naturally: ellipse (a>0, 1-e²>0) and
+            // hyperbola (a<0, 1-e²<0) both yield a positive p without needing Abs.
+            return a * (1 - e * e);
+        }
+
+
+        /// <summary>
+        /// Calculates the semi-latus rectum (semi-parameter) of a parabolic orbit (e = 1) from the periapsis distance.
+        /// </summary>
+        /// <param name="periapsis">Periapsis distance q. Must be positive.</param>
+        /// <returns>Semi Parameter / Semi Latus Rectum p = 2q</returns>
+        /// <exception cref="ArgumentException">Thrown when periapsis is not positive</exception>
+        public static float CalculateSemiParameterFromPeriapsis(float periapsis) {
+            if (periapsis <= 0) throw new ArgumentException("Periapsis must be positive");
+            return 2f * periapsis;
         }
 
 
@@ -35,13 +52,17 @@ namespace OrbitalSimulator.src.Orbits {
         /// <param name="e">Eccentricity</param>
         /// <param name="a">Semi-Major Axis</param>
         /// <returns>Semi-Minor Axis b</returns>
-        /// <exception cref="ArgumentException">Thrown if Semi-Major Axis negative or eccentricity invalid</exception>
+        /// <exception cref="ArgumentException">Thrown if Semi-Major Axis is zero, sign is inconsistent with
+        /// eccentricity (a &gt; 0 with e &gt; 1, or a &lt; 0 with e &lt; 1), or eccentricity invalid</exception>
         public static float CalculateSemiMinorAxis(float e, float a) {
             if (MathF.Abs(a) < Program.EPS) throw new ArgumentException("Semi-major axis cannot be zero");
             if (e < 0) throw new ArgumentException("Eccentricity cannot be negative");
+            if (GetOrbitType(e) == OrbitType.Parabolic) throw new ArgumentException("Semi-minor axis is undefined for parabolic orbits (e = 1)");
+            if (a > 0 && e > 1f) throw new ArgumentException("Semi-major axis must be negative for hyperbolic orbits (e > 1)");
+            if (a < 0 && e < 1f) throw new ArgumentException("Semi-major axis must be positive for elliptical orbits (e < 1)");
 
             float val = (e < 1f) ? (1 - e * e) : (e * e - 1);
-            return MathF.Abs(a) * MathF.Sqrt(MathF.Abs(val));
+            return MathF.Abs(a) * MathF.Sqrt(val);
         }
 
 
@@ -672,6 +693,28 @@ namespace OrbitalSimulator.src.Orbits {
             if (e >= 1f) return float.NaN; //This formula is for elliptical orbits only
             float E = MathF.Atan2(MathF.Sqrt(1 - e * e) * MathF.Sin(ν), e + MathF.Cos(ν));
             return NormalizeAngle(E);
+        }
+
+
+        /// <summary>
+        /// Calculates the parabolic anomaly D from true anomaly (for parabolic orbits, e = 1).
+        /// </summary>
+        /// <remarks>D = tan(ν/2). Unlike elliptical/hyperbolic anomalies this is not an angle but a
+        /// unitless parameter used directly in Barker's equation.</remarks>
+        /// <param name="ν">True anomaly, in radians.</param>
+        /// <returns>Parabolic anomaly D.</returns>
+        public static float CalculateParabolicAnomaly(float ν) {
+            return MathF.Tan(ν / 2f);
+        }
+
+
+        /// <summary>
+        /// Calculates the mean anomaly of a parabolic orbit from the parabolic anomaly using Barker's equation.
+        /// </summary>
+        /// <param name="D">Parabolic anomaly (D = tan(ν/2)).</param>
+        /// <returns>Mean anomaly M = D + D³/3.</returns>
+        public static float CalculateMeanAnomalyParabolic(float D) {
+            return D + (D * D * D) / 3f;
         }
 
         #region helpers

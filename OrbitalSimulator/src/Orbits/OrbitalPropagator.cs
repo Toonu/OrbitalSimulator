@@ -50,22 +50,33 @@ namespace OrbitalSimulator.src.Orbits {
             float a = op.SemiMajorAxis;
             float e = op.Eccentricity;
 
-            // --- Mean motion ---
-            float n = MathF.Sqrt(μ / MathF.Abs(a * a * a));
-
             float nu;
 
-            if (e < 1f) {
-                float M = OrbitalMath.NormalizeAngle(op.MeanAnomaly + n * t);
+            if (OrbitalMath.GetOrbitType(e) == OrbitType.Parabolic) {
+                // Parabolic mean motion is defined via the semi-parameter, since a is undefined (infinite) for e = 1.
+                float p = op.SemiParameter;
+                float nPar = MathF.Sqrt(μ / (2f * p * p * p));
 
-                float E = SolveKepler(M, e);
-                nu = OrbitalMath.CalculateTrueAnomalyFromEccentricAnomaly(e, E);
+                float M = op.MeanAnomaly + nPar * t;
+
+                float D = SolveBarkerEquation(M);
+                nu = ParabolicToTrueAnomaly(D);
             } else {
-                float M0 = OrbitalMath.CalculateMeanAnomalyForHyperbolic(e, op.TrueAnomaly);
-                float M = M0 + n * t;
+                // --- Mean motion ---
+                float n = MathF.Sqrt(μ / MathF.Abs(a * a * a));
 
-                float H = SolveKeplerHyperbolic(M, e);
-                nu = HyperbolicToTrueAnomaly(e, H);
+                if (e < 1f) {
+                    float M = OrbitalMath.NormalizeAngle(op.MeanAnomaly + n * t);
+
+                    float E = SolveKepler(M, e);
+                    nu = OrbitalMath.CalculateTrueAnomalyFromEccentricAnomaly(e, E);
+                } else {
+                    float M0 = OrbitalMath.CalculateMeanAnomalyForHyperbolic(e, op.TrueAnomaly);
+                    float M = M0 + n * t;
+
+                    float H = SolveKeplerHyperbolic(M, e);
+                    nu = HyperbolicToTrueAnomaly(e, H);
+                }
             }
 
             var updated = new OrbitalParameters(op.Focus, a, e, nu, op.Inclination, op.RightAscensionOfAscendingNode, op.ArgumentOfPeriapsis);
@@ -107,6 +118,44 @@ namespace OrbitalSimulator.src.Orbits {
         }
 
 
+        /// <summary>
+        /// Solves Barker's equation for parabolic orbits and returns the parabolic anomaly D corresponding to the
+        /// specified mean anomaly.
+        /// Solves Barker's Equation: M = D + D³/3
+        /// Only valid for parabolic orbits (e = 1).
+        /// </summary>
+        /// <param name="M">The mean anomaly.</param>
+        /// <param name="maxIterations">The maximum number of iterations when solving. Must be positive. The default is 15.</param>
+        /// <param name="tolerance">The convergence tolerance for the solution. Iteration stops when the change is less than this value. Default is 1e-6.</param>
+        /// <returns>The parabolic anomaly D.</returns>
+        public static float SolveBarkerEquation(float M, int maxIterations = 15, float tolerance = 1e-6f) {
+            // Initial guess. For small M, D ≈ M works well; Newton's method converges quickly regardless.
+            float D = M;
+
+            for (int i = 0; i < maxIterations; i++) {
+                float f = OrbitalMath.CalculateMeanAnomalyParabolic(D) - M;
+                float fPrime = 1f + D * D;
+
+                float delta = f / fPrime;
+                D -= delta;
+
+                if (MathF.Abs(delta) < tolerance) break;
+            }
+
+            return D;
+        }
+
+
+        /// <summary>
+        /// Converts a parabolic anomaly D to true anomaly ν (for parabolic orbits, e = 1).
+        /// </summary>
+        /// <param name="D">Parabolic anomaly (D = tan(ν/2)).</param>
+        /// <returns>True anomaly ν, in radians.</returns>
+        public static float ParabolicToTrueAnomaly(float D) {
+            return 2f * MathF.Atan(D);
+        }
+
+
         public static List<Vector3> GenerateEllipsePoints(OrbitalParameters op, int segments = 200) {
             var points = new List<Vector3>();
 
@@ -142,6 +191,48 @@ namespace OrbitalSimulator.src.Orbits {
                     op.Focus,
                     op.SemiMajorAxis,
                     e,
+                    nu,
+                    op.Inclination,
+                    op.RightAscensionOfAscendingNode,
+                    op.ArgumentOfPeriapsis
+                );
+
+                try {
+                    var (r, _) = OrbitalMath.CalculateOrbitalVectorsFromParameters(temp);
+                    if (r.IsFinite()) // safety
+                        points.Add(r);
+                } catch { }
+            }
+
+            return points;
+        }
+
+
+        /// <summary>
+        /// Generates a set of points along a parabolic orbit (e = 1) for rendering purposes.
+        /// </summary>
+        /// <remarks>Since a parabolic trajectory extends to infinity as true anomaly approaches ±π,
+        /// the true anomaly range is bounded to a fraction of that limit to keep the generated points finite.</remarks>
+        /// <param name="op">The orbital parameters describing the parabolic orbit. SemiMajorAxis is interpreted as the periapsis distance.</param>
+        /// <param name="steps">The number of segments to generate along the trajectory.</param>
+        /// <returns>A list of position vectors along the parabolic trajectory.</returns>
+        public static List<Vector3> GenerateParabolicPoints(OrbitalParameters op, int steps = 150) {
+            var points = new List<Vector3>();
+
+            if (OrbitalMath.GetOrbitType(op.Eccentricity) != OrbitType.Parabolic)
+                return points; // fallback
+
+            // True anomaly approaches ±π asymptotically; bound to 95% of that to avoid infinity.
+            float nuMax = MathF.PI * 0.95f;
+
+            for (int i = 0; i <= steps; i++) {
+                float t = (float)i / steps;
+                float nu = Mathf.Lerp(-nuMax, nuMax, t);
+
+                var temp = new OrbitalParameters(
+                    op.Focus,
+                    op.Periapsis,
+                    op.Eccentricity,
                     nu,
                     op.Inclination,
                     op.RightAscensionOfAscendingNode,

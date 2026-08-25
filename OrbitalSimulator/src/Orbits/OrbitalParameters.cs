@@ -152,23 +152,39 @@ namespace OrbitalSimulator.src.Orbits {
 
         private void RecalculateDerivedValues() {
             Type = OrbitalMath.GetOrbitType(Eccentricity);
-            SemiParameter = OrbitalMath.CalculateSemiParameter(Eccentricity, SemiMajorAxis);
-            if (Type == OrbitType.Elliptical) {
-                //Fails for hyperbolic orbits, so we catch the exception and leave SemiMinorAxis as 0 in that case.
-                SemiMinorAxis = OrbitalMath.CalculateSemiMinorAxis(Eccentricity, SemiMajorAxis);
+
+            if (Type == OrbitType.Parabolic) {
+                // SemiMajorAxis is undefined for parabolic orbits (a → ∞); by convention the
+                // SemiMajorAxis constructor argument is interpreted as the periapsis distance q instead.
+                Periapsis = SemiMajorAxis;
+                SemiParameter = OrbitalMath.CalculateSemiParameterFromPeriapsis(Periapsis);
+                SemiMinorAxis = 0f;
+                Apoapsis = float.NaN;
+                OrbitalPeriod = float.NaN;
+                SpecificOrbitalEnergy = 0f; // Parabolic orbits have zero specific orbital energy by definition
+
+                float D = OrbitalMath.CalculateParabolicAnomaly(TrueAnomaly);
+                EccentricAnomaly = D;
+                MeanAnomaly = OrbitalMath.CalculateMeanAnomalyParabolic(D);
+            } else {
+                SemiParameter = OrbitalMath.CalculateSemiParameter(Eccentricity, SemiMajorAxis);
+                if (Type == OrbitType.Elliptical) {
+                    //Fails for hyperbolic orbits, so we catch the exception and leave SemiMinorAxis as 0 in that case.
+                    SemiMinorAxis = OrbitalMath.CalculateSemiMinorAxis(Eccentricity, SemiMajorAxis);
+                }
+
+                Periapsis = OrbitalMath.CalculatePeriapsis(Eccentricity, SemiMajorAxis);
+                //Hyperbolic orbit does not have Apoapsis, so we set it to NaN in that case. Otherwise, we calculate it normally.
+                Apoapsis = Type != OrbitType.Elliptical ? float.NaN : OrbitalMath.CalculateApoapsis(Eccentricity, SemiMajorAxis);
+
+                OrbitalPeriod = Type == OrbitType.Elliptical ? OrbitalMath.CalculateOrbitalPeriod(SemiMajorAxis, Mu) : float.NaN;
+
+                EccentricAnomaly = OrbitalMath.CalculateEccentricAnomaly(Eccentricity, TrueAnomaly);
+                MeanAnomaly = OrbitalMath.CalculateMeanAnomaly(EccentricAnomaly, Eccentricity);
+
+                SpecificOrbitalEnergy = OrbitalMath.CalculateSpecificOrbitalEnergy(SemiMajorAxis);
             }
 
-
-            Periapsis = OrbitalMath.CalculatePeriapsis(Eccentricity, SemiMajorAxis);
-            //Hyperbolic orbit does not have Apoapsis, so we set it to NaN in that case. Otherwise, we calculate it normally.
-            Apoapsis = Type != OrbitType.Elliptical ? float.NaN : OrbitalMath.CalculateApoapsis(Eccentricity, SemiMajorAxis);
-
-            OrbitalPeriod = Type == OrbitType.Elliptical ? OrbitalMath.CalculateOrbitalPeriod(SemiMajorAxis, Mu) : float.NaN;
-
-            EccentricAnomaly = OrbitalMath.CalculateEccentricAnomaly(Eccentricity, TrueAnomaly);
-            MeanAnomaly = OrbitalMath.CalculateMeanAnomaly(EccentricAnomaly, Eccentricity);
-
-            SpecificOrbitalEnergy = OrbitalMath.CalculateSpecificOrbitalEnergy(SemiMajorAxis);
             SpecificAngularMomentum = OrbitalMath.CalculateSpecificAngularMomentum(SemiParameter);
             var (r, v) = OrbitalMath.CalculateOrbitalVectorsFromParameters(this);
             FlightPathAngle = OrbitalMath.CalculateFlightPathAngle(r, v);

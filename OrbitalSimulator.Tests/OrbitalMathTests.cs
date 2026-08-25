@@ -179,13 +179,13 @@ namespace OrbitalSimulator.Tests
         [Fact]
         public void SemiMinorAxis_ShouldSupportHyperbolic()
         {
-            float a = 10000f;
+            float a = -10000f; // Negative a for hyperbolic orbits
             float e = 1.5f;
 
             var result = OrbitalMath.CalculateSemiMinorAxis(e, a);
             Assert.True(result > 0);
-            // b = a * sqrt(e² - 1)
-            Assert.Equal(a * MathF.Sqrt(e * e - 1), result, Program.EPS);
+            // b = |a| * sqrt(e² - 1)
+            Assert.Equal(MathF.Abs(a) * MathF.Sqrt(e * e - 1), result, Program.EPS);
         }
 
         [Fact]
