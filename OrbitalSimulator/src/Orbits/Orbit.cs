@@ -20,7 +20,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <summary>
         /// Optional labels used to display the current orbital parameters (see <see cref="OrbitalParameters.ToString"/>) for debugging/inspection.
         /// </summary>
-        [Export] private List<Label> InfoLabels { get; set; }
+        [Export] private Godot.Collections.Array<Label> InfoLabels { get; set; }
         private Node3D satellite;
         /// <summary>
         /// The node representing the orbiting body. Its local position is updated to reflect the current point on

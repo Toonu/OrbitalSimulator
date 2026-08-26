@@ -58,8 +58,9 @@ namespace OrbitalSimulator.src.Orbits {
         /// </summary>
         public float Inclination { get; set; }
         /// <summary>
-        /// Right Ascension of the Ascending Node (Ω / RAAN)
+        /// Longitude of Ascending Node (Ω / RAAN)
         /// Angle from the reference direction to the ascending node, measured in the reference plane.
+        /// The intersection between orbital and reference plane is the ascending node.
         /// </summary>
         public float RightAscensionOfAscendingNode { get; set; }
         /// <summary>
