@@ -21,7 +21,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <summary>
         /// Classification of the orbit based on eccentricity:
         /// - Elliptical (0 ≤ e < 1)
-        /// - Parabolic (0 = 1)
+        /// - Parabolic (e = 1)
         /// - Hyperbolic (e > 1)
         /// </summary>
         public OrbitType Type { get; set; }
@@ -218,7 +218,7 @@ namespace OrbitalSimulator.src.Orbits {
             values.Add($"ω = {OrbitalMath.ToDegrees(ArgumentOfPeriapsis)}°");
             values.Add($"φ = {OrbitalMath.ToDegrees(FlightPathAngle)}°");
             values.Add($"ε = {SpecificOrbitalEnergy}km²/s²");
-            values.Add($"h = {SpecificAngularMomentum}km²/s²");
+            values.Add($"h = {SpecificAngularMomentum}km²/s");
             return string.Join('\n', values);
         }
 
