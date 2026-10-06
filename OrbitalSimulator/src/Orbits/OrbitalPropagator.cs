@@ -1,6 +1,6 @@
+using Godot;
 using System;
 using System.Collections.Generic;
-using Godot;
 
 namespace OrbitalSimulator.src.Orbits {
     public static class OrbitalPropagator {
@@ -177,8 +177,7 @@ namespace OrbitalSimulator.src.Orbits {
             var points = new List<Vector3>();
             float e = op.Eccentricity;
 
-            if (e <= 1f)
-                return points; // fallback
+            if (e <= 1f) return points; // fallback
 
             // Calculate the maximum true anomaly (asymptote)
             float nuMax = MathF.Acos(-1f / e) * 0.95f; // 95% of asymptote to avoid infinity
@@ -199,8 +198,7 @@ namespace OrbitalSimulator.src.Orbits {
 
                 try {
                     var (r, _) = OrbitalMath.CalculateOrbitalVectorsFromParameters(temp);
-                    if (r.IsFinite()) // safety
-                        points.Add(r);
+                    if (r.IsFinite()) points.Add(r);
                 } catch { }
             }
 
@@ -219,8 +217,7 @@ namespace OrbitalSimulator.src.Orbits {
         public static List<Vector3> GenerateParabolicPoints(OrbitalParameters op, int steps = 150) {
             var points = new List<Vector3>();
 
-            if (OrbitalMath.GetOrbitType(op.Eccentricity) != OrbitType.Parabolic)
-                return points; // fallback
+            if (OrbitalMath.GetOrbitType(op.Eccentricity) != OrbitType.Parabolic) return points; // fallback
 
             // True anomaly approaches ±π asymptotically; bound to 95% of that to avoid infinity.
             float nuMax = MathF.PI * 0.95f;
@@ -241,8 +238,7 @@ namespace OrbitalSimulator.src.Orbits {
 
                 try {
                     var (r, _) = OrbitalMath.CalculateOrbitalVectorsFromParameters(temp);
-                    if (r.IsFinite()) // safety
-                        points.Add(r);
+                    if (r.IsFinite()) points.Add(r);
                 } catch { }
             }
 

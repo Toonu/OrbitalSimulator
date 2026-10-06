@@ -31,6 +31,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Thrown when periapsis is not positive</exception>
         public static float CalculateSemiParameterFromPeriapsis(float periapsis) {
             if (periapsis <= 0) throw new ArgumentException("Periapsis must be positive");
+
             return 2f * periapsis;
         }
 
@@ -75,6 +76,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Throws if ap/pe is not positive</exception>
         public static float CalculateSemiMajorAxis(float ap, float pe) {
             if (ap <= 0 || pe <= 0) throw new ArgumentException("Distances must be positive");
+
             return (ap + pe) / 2;
         }
 
@@ -104,6 +106,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Throws error for invalid eccentricity or hyperbolic orbit.</exception>
         public static float CalculateApoapsis(float e, float a) {
             if (e >= 1f - Program.EPS) throw new ArgumentException("Apoapsis is not defined for parabolic and hyperbolic orbits (e >= 1)");
+
             return a * (1 + e);
         }
 
@@ -118,6 +121,7 @@ namespace OrbitalSimulator.src.Orbits {
         public static float CalculateApoapsisFromSemiParameter(float e, float p) {
             if (e >= 1f - Program.EPS) throw new ArgumentException("Apoapsis is not defined for parabolic and hyperbolic orbits (e >= 1)");
             if (MathF.Abs(1 - e) < Program.EPS) throw new ArgumentException("Invalid eccentricity");
+
             return p / (1 - e);
         }
 
@@ -130,6 +134,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Throws when eccentricity is not positive</exception>
         public static float CalculatePeriapsis(float e, float a) {
             if (e < 0) throw new ArgumentException("Eccentricity cannot be negative");
+
             return a * (1 - e);
         }
 
@@ -143,6 +148,7 @@ namespace OrbitalSimulator.src.Orbits {
         public static float CalculatePeriapsisFromSemiParameter(float e, float p) {
             if (e < 0) throw new ArgumentException("Eccentricity cannot be negative");
             if (MathF.Abs(1 + e) < Program.EPS) throw new ArgumentException("Invalid eccentricity");
+
             return p / (1 + e);
         }
 
@@ -204,7 +210,6 @@ namespace OrbitalSimulator.src.Orbits {
         /// <returns>Orbital eccentricity vector e. The direction points toward periapsis, and the magnitude equals the orbit's eccentricity.</returns>
         public static Vector3 CalculateEccentricityVector(Vector3 r, Vector3 v, float μ = OrbitalParameters.Mu) {
             if (μ <= 0) throw new ArgumentException("GM must be positive");
-
             float rMag = r.Length();
             if (rMag < Program.EPS) throw new ArgumentException("Position vector too small");
 
@@ -234,6 +239,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Thrown if a not positive</exception>
         public static float CalculateLinearEccentricity(float a, float e) {
             if (MathF.Abs(a) < Program.EPS) throw new ArgumentException("Semi-major axis cannot be zero");
+
             return a * e;
         }
 
@@ -248,11 +254,9 @@ namespace OrbitalSimulator.src.Orbits {
         public static float CalculateLinearEccentricityUsingSemiMinorAxis(float a, float b) {
             if (MathF.Abs(a) < Program.EPS) throw new ArgumentException("Semi-major axis cannot be zero");
             float val = a * a - b * b;
-
             if (val < -Program.EPS) throw new ArgumentException("Invalid axes");
 
             return MathF.Sqrt(MathF.Max(0, val));
-
         }
 
 
@@ -266,9 +270,6 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException"></exception>
         public static float CalculateDistanceToSatellite(float e, float p, float v) {
             float denom = 1 + e * MathF.Cos(v);
-
-            //if (MathF.Abs(denom) < Program.EPS) throw new ArgumentException("True anomaly near singularity");
-
             return p / denom;
         }
 
@@ -282,6 +283,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Thrown if a not positive</exception>
         public static float CalculateSpecificOrbitalEnergy(float a, float μ = OrbitalParameters.Mu) {
             if (MathF.Abs(a) < Program.EPS) throw new ArgumentException("Semi-major axis cannot be zero");
+
             return -(μ / (2 * a));
         }
 
@@ -322,6 +324,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Throws if μ or r is not positive</exception>
         public static float CalculateCircularVelocity(float r, float μ = OrbitalParameters.Mu) {
             if (μ <= 0 || r <= 0) throw new ArgumentException("GM and radius must be positive");
+
             return MathF.Sqrt(μ / r);
         }
 
@@ -335,6 +338,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Throws if a or t is not positive</exception>
         public static float CalculateCircularVelocityFromPeriod(float a, float t) {
             if (a <= 0 || t <= 0) throw new ArgumentException("Semi-major axis and period must be positive");
+
             return 2f * MathF.PI * a / t;
         }
 
@@ -403,6 +407,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException"></exception>
         public static float CalculateTrueAnomalyFromRadius(float e, float p, float r, float vr) {
             if (r <= 0) throw new ArgumentException("Radius must be positive");
+
             if (MathF.Abs(e) < Program.EPS) return 0f; // circular orbit (ν undefined -> return 0 convention)
 
             // Compute cos(ν)
@@ -429,7 +434,6 @@ namespace OrbitalSimulator.src.Orbits {
         public static float CalculateMeanAnomalyForHyperbolic(float e, float nu) {
             float factor = MathF.Sqrt((e - 1) / (e + 1));
             float tanHalfNu = MathF.Tan(nu / 2f);
-
             float H = 2f * MathF.Atanh(factor * tanHalfNu);
 
             return e * MathF.Sinh(H) - H;
@@ -446,6 +450,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Throws if e >= 1</exception>
         public static float CalculateTrueAnomalyFromEccentricAnomaly(float e, float E) {
             if (e >= 1f) throw new ArgumentException("This formula is for elliptical orbits only");
+
             float tanHalfNu = MathF.Sqrt((1 + e) / (1 - e)) * MathF.Tan(E / 2f);
             return 2f * MathF.Atan(tanHalfNu);
         }
@@ -460,6 +465,7 @@ namespace OrbitalSimulator.src.Orbits {
         /// <exception cref="ArgumentException">Throws if μ or p is not positive</exception>
         public static float CalculateSpecificAngularMomentum(float p, float μ = OrbitalParameters.Mu) {
             if (μ <= 0 || p <= 0) throw new ArgumentException("GM and p must be positive");
+
             return MathF.Sqrt(μ * p);
         }
 
@@ -482,7 +488,6 @@ namespace OrbitalSimulator.src.Orbits {
         public static float CalculateFlightPathAngle(Vector3 r, Vector3 v) {
             float rMag = r.Length();
             float vMag = v.Length();
-
             if (rMag < Program.EPS || vMag < Program.EPS) throw new ArgumentException("Invalid vectors");
 
             // radial velocity
@@ -505,6 +510,7 @@ namespace OrbitalSimulator.src.Orbits {
             float hz = h.Z;
             float hMag = h.Length();
             if (hMag < Program.EPS) throw new ArgumentException("Angular momentum vector is too small");
+
             return MathF.Acos(Math.Clamp(hz / hMag, -1f, 1f));
         }
 
@@ -581,7 +587,6 @@ namespace OrbitalSimulator.src.Orbits {
 
             float rMag = r.Length();
             float vMag = v.Length();
-
             if (rMag < Program.EPS) throw new ArgumentException("Position vector is near zero");
 
             Vector3 h = CalculateAngularMomentumVector(r, v);
@@ -717,7 +722,9 @@ namespace OrbitalSimulator.src.Orbits {
             return D + (D * D * D) / 3f;
         }
 
-        #region helpers
+
+        #region Helpers
+
 
         /// <summary>
         /// Normalizes angle
@@ -771,8 +778,9 @@ namespace OrbitalSimulator.src.Orbits {
         }
 
 
-
         public static float ToDegrees(float radians) => radians * 180f / MathF.PI;
+
+
         public static float ToRadians(float degrees) => degrees * MathF.PI / 180f;
         #endregion
     }

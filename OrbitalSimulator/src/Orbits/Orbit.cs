@@ -186,12 +186,8 @@ namespace OrbitalSimulator.src.Orbits {
             if (immediateMesh == null) immediateMesh = new ImmediateMesh();
             else immediateMesh.ClearSurfaces();
 
-            if (Filled) {
-                DrawFilledOrbit(points);
-                DrawLineOrbit(points);
-            } else {
-                DrawLineOrbit(points);
-            }
+            if (Filled) DrawFilledOrbit(points);
+            DrawLineOrbit(points);
 
             Mesh = immediateMesh;
 
@@ -287,8 +283,7 @@ namespace OrbitalSimulator.src.Orbits {
         private void DrawLineOrbit(List<Vector3> points) {
             immediateMesh.SurfaceBegin(Mesh.PrimitiveType.LineStrip);
             immediateMesh.SurfaceSetColor(LineColor);
-            foreach (var p in points)
-                immediateMesh.SurfaceAddVertex(p);
+            foreach (var p in points) immediateMesh.SurfaceAddVertex(p);
             immediateMesh.SurfaceEnd();
 
             ApplyLineMaterial();

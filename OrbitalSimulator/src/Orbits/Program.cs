@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 namespace OrbitalSimulator.src.Orbits {
@@ -10,9 +9,8 @@ namespace OrbitalSimulator.src.Orbits {
         /// </summary>
         /// <param name="args">Arguments string[]</param>
         public static void Start(string[] args) {
-            if (args.Length > 0) {
-                GD.Print(args.Join());
-            }
+            if (args.Length > 0) GD.Print(args.Join());
+
 
             float ftTokmConversion = 0.0003048f; // ft → km
 
